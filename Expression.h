@@ -5,8 +5,8 @@
 * @file
 * Arithmethic expression evaluator
 * C++ implementation of the Shunting Yard  Algorithm by E.W. Dijkstra.
-* ImplementaciÛn en C++ del algoritmo Shunting Yard propuesto por E. W. Dijkstra.
-* Adaptado para aceptar variables, funciones personalizadas y el operador unario de negaciÛn "~"
+* Implementaci√≥n en C++ del algoritmo Shunting Yard propuesto por E. W. Dijkstra.
+* Adaptado para aceptar variables, funciones personalizadas y el operador unario de negaci√≥n "~"
 * @author Erwin Meza Vega <emezav@unicauca.edu.co>
 * @copyright MIT License
 */
@@ -35,10 +35,10 @@
 	  - a number:
 	    put it into the output queue
 	  - a function:
-	    push it onto the operator stack 
+	    push it onto the operator stack
 	  - an operator o1:
 	   while (
-	     there is an operator o2 at the top of the operator stack which is not a left parenthesis, 
+	     there is an operator o2 at the top of the operator stack which is not a left parenthesis,
 	     and (o2 has greater precedence than o1 or (o1 and o2 have the same precedence and o1 is left-associative))
 	    ):
 	       pop o2 from the operator stack into the output queue
@@ -48,16 +48,16 @@
 	  - a right parenthesis (i.e. ")"):
 	    while the operator at the top of the operator stack is not a left parenthesis:
 	      {assert the operator stack is not empty}
-	       // If the stack runs out without finding a left parenthesis, then there are mismatched parenthesis. 
+	       // If the stack runs out without finding a left parenthesis, then there are mismatched parenthesis.
 	        pop the operator from the operator stack into the output queue
 	        {assert there is a left parenthesis at the top of the operator stack}
 		pop the left parenthesis from the operator stack and discard it
 		if there is a function token at the top of the operator stack, then:
 			pop the function from the operator stack into the output queue
-		
-	// After the while loop, pop the remaining items from the operator stack into the output queue. 
+
+	// After the while loop, pop the remaining items from the operator stack into the output queue.
 	while there are tokens on the operator stack:
-		// If the operator token on the top of the stack is a parenthesis, then there are mismatched parenthesis. 
+		// If the operator token on the top of the stack is a parenthesis, then there are mismatched parenthesis.
 	    {assert the operator on top of the stack is not a (left) parenthesis}
         pop the operator from the operator stack onto the output queue
 */
@@ -72,16 +72,16 @@ using std::ostringstream;
 
 
 /**
-* @brief FunciÛn personalizada sobre una variable real
+* @brief Funci√≥n personalizada sobre una variable real
 */
 struct CustomFunction {
-	string name; /*!< Nombre de la funciÛn */
-	function<double(double)> f; /*!< FunciÛn a aplicar a la variable */
-	
+	string name; /*!< Nombre de la funci√≥n */
+	function<double(double)> f; /*!< Funci√≥n a aplicar a la variable */
+
 	/**
-	* @brief Eval˙a la funciÛn en x
+	* @brief Eval√≥a la funci√≥n en x
 	* @param x Valor de la variable
-	* @return Valor de la funciÛn en x
+	* @return Valor de la funci√≥n en x
 	*/
 	double operator()(double x) {
 		return f(x);
@@ -89,7 +89,7 @@ struct CustomFunction {
 };
 
 /**
-* @brief Variable de la expresiÛn aritmÈtica
+* @brief Variable de la expresi√≥n aritm√©tica
 */
 struct Variable {
 	string name; /*!< Nombre de la variable */
@@ -97,98 +97,98 @@ struct Variable {
 };
 
 /**
-* @brief ExpresiÛn aritmÈtica de una variable
+* @brief Expresi√≥n aritm√©tica de una variable
 */
-class Expression {
-public: 
+class expression {
+public:
 	/**
-	* @brief Crea una expresiÛn a partir de una cadena de caracteres
-	* @param exprText Texto de la expresiÛn en notaciÛn infija
+	* @brief Crea una expresi√≥n a partir de una cadena de caracteres
+	* @param exprText Texto de la expresi√≥n en notaci√≥n infija
 	*/
-	Expression(string exprText): Expression(exprText, defaultFunctions()) {
+	expression(string exprText): expression(exprText, defaultFunctions()) {
 	}
-	
+
 	/**
-	* @brief Crea una expresiÛn a partir de una cadena de caracteres y un conjunto de funciones personalizadas
-	* @param exprText Texto de la expresiÛn en notaciÛn infija
+	* @brief Crea una expresi√≥n a partir de una cadena de caracteres y un conjunto de funciones personalizadas
+	* @param exprText Texto de la expresi√≥n en notaci√≥n infija
 	* @param funcs Vector de funciones personalizadas
 	*/
-	Expression(string exprText, vector<CustomFunction> funcs): text(exprText), functions(funcs) {
+	expression(string exprText, vector<CustomFunction> funcs): text(exprText), functions(funcs) {
 		balanced = false;
-		
+
 		//Remove spaces
 		text.erase(std::remove(text.begin(),text.end(), ' '), text.end());
 		//Separate into tokens
 		tokens = getTokens();
-		
+
 		//Create RPN expression
 		rpn = getRPN(tokens);
-		
+
 		//Save string of the original expression
 		ostringstream tokens_oss;
 		for (auto & t: tokens) {
 			tokens_oss << t << " ";
 		}
 		tokensStr = tokens_oss.str();
-		
+
 		//Save string of the RPN expression
 		ostringstream rpn_oss;
 		for (auto & t: rpn) {
 			rpn_oss << t << " ";
 		}
 		rpnStr = rpn_oss.str();
-		
+
 	}
-	
+
 	/**
 	* @brief Funciones predeterminadas
 	* @return Arreglo de funciones predeterminadas
 	*/
 	vector<CustomFunction> defaultFunctions() {
 		return {
-				{ "sin" , 
+				{ "sin" ,
 					[](double x) -> double {
 						return sin(x);
 					}
 				},
-				{ "cos" , 
+				{ "cos" ,
 					[](double x) -> double {
 						return cos(x);
 					}
 				},
-				{ "tan" , 
+				{ "tan" ,
 					[](double x) -> double {
 						return tan(x);
 					}
 				},
-				{ "ln" , 
+				{ "ln" ,
 					[](double x) -> double {
 						return log(x);
 					}
 				},
-				{ "log" , 
+				{ "log" ,
 					[](double x) -> double {
 						return log10(x);
 					}
 				},
-				{ "exp" , 
+				{ "exp" ,
 					[](double x) -> double {
 						return exp(x);
 					}
 				},
-				{ "sqrt" , 
+				{ "sqrt" ,
 					[](double x) -> double {
 						return sqrt(x);
 					}
 				},
-				{ "abs" , 
+				{ "abs" ,
 					[](double x) -> double {
 						return abs(x);
 					}
 				}
 		};
 	}
-	
+
 	/**
 	* @brief Variables predeterminadas
 	* @return Vector de variables predeterminadas
@@ -199,43 +199,43 @@ public:
 			{"e",  2.718281828f }
 		};
 	}
-	
+
 	/**
-	* @brief Verifica si la expresiÛn est· bien balanceada
-	* @return verdadero si los parÈntesis est·n balanceados, falso en caso contrario
+	* @brief Verifica si la expresi√≥n est√≥ bien balanceada
+	* @return verdadero si los par√≥ntesis est√≥n balanceados, falso en caso contrario
 	*/
 	bool checkParenthesis() {
 		int cnt = 0;
-		
+
 		size_t pos = 0;
-		
+
 		while (pos < text.length() && cnt >= 0) {
-			if (text[pos] == '(') { 
-				cnt ++; 
+			if (text[pos] == '(') {
+				cnt ++;
 			}
-			else if (text[pos] == ')') { 
+			else if (text[pos] == ')') {
 				cnt--;
 			}
 			pos++;
 		}
-		
+
 		balanced = (cnt == 0);
-		
+
 		return balanced;
 	}
-	
+
 	/**
-	* @brief Retorna la condiciÛn de balance de parÈntesis
-	* @return Verdadero si los parÈntesis est·n balanceados
+	* @brief Retorna la condici√≥n de balance de par√≥ntesis
+	* @return Verdadero si los par√≥ntesis est√≥n balanceados
 	*/
 	bool isBalanced() {
 		return balanced;
 	}
-	
+
 	/**
-	* @brief Verifica si una cadena es un operador aritmÈtico v·lido
+	* @brief Verifica si una cadena es un operador aritm√≥tico v√°lido
 	* @param str Cadena a verificar
-	* @return Verdadero si la cadena es un operador aritmÈtico v·lido
+	* @return Verdadero si la cadena es un operador aritm√≥tico v√°lido
 	*/
 	bool isOperator(string str) {
 		return (
@@ -247,11 +247,11 @@ public:
 				|| str == "~"
 				);
 	}
-	
+
 	/**
-	* @brief Verifica si una cadena es un n˙mero v·lido
+	* @brief Verifica si una cadena es un n√≥mero v√°lido
 	* @param str Cadena a verificar
-	* @return Verdadero si la cadena representa un n˙mero v·lido
+	* @return Verdadero si la cadena representa un n√≥mero v√°lido
 	*/
 	bool isNumber(string str)
 	{
@@ -259,7 +259,7 @@ public:
 		strtod(str.c_str(), &p);
 		return *p == 0;
 	}
-	
+
 	/**
 	* @brief Verifica la asociatividad a la izquierda de un operador
 	* @param str Operador
@@ -273,7 +273,7 @@ public:
 				|| str == "/"
 				);
 	}
-	
+
 	/**
 	* @brief Verifica si un operador es binario
 	* @param str Operador
@@ -288,8 +288,8 @@ public:
 				|| str == "^"
 				);
 	}
-	
-	/** 
+
+	/**
 	* @brief Verifica si un operador es unario
 	* @param str Operador
 	* @return Verdadero si el operador es unario, e.g. requiere un operando
@@ -297,7 +297,7 @@ public:
 	bool isUnaryOperator(string str) {
 		return (str == "~");
 	}
-	
+
 	/**
 	* @brief Verifica y obtiene un valor a partir de una cadena
 	* @param str Cadena a evaluar
@@ -312,7 +312,7 @@ public:
 		val = strtod(str.c_str(), &p);
 		return *p == 0;
 	}
-	
+
 	/**
 	* @brief Convierte un valor real a cadena
 	* @param val Valor a convertir
@@ -320,34 +320,34 @@ public:
 	*/
 	string numberToString(double val) {
 		ostringstream oss;
-		
+
 		oss<< val;
-		
+
 		return oss.str();
 	}
-	
+
 	/**
-	* @brief Retorna la representaciÛn en cadena de la expresiÛn
-	* @return RepresentaciÛn en cadena de la expresiÛn
+	* @brief Retorna la representaci√≥n en cadena de la expresi√≥n
+	* @return Representaci√≥n en cadena de la expresi√≥n
 	*/
 	string str() {
 		return tokensStr;
 	}
-	
+
 	/**
-	* @brief Retorna la representaciÛn en cadena de la expresiÛn en RPN
-	* @return RepresentaciÛn en RPN (Reverse Polish Notation) de la expresiÛn
+	* @brief Retorna la representaci√≥n en cadena de la expresi√≥n en RPN
+	* @return Representaci√≥n en RPN (Reverse Polish Notation) de la expresi√≥n
 	*/
 	string rpnstr() {
 		return rpnStr;
 	}
-	
+
 	/**
-	* @brief Calcula el resultado de una operaciÛn binaria
+	* @brief Calcula el resultado de una operaci√≥n binaria
 	* @param a Primer operando
 	* @param b Segundo operando
 	* @param op Operando
-	* @return Resultado de la operaciÛn, NAN si no es v·lida
+	* @return Resultado de la operaci√≥n, NAN si no es v√°lida
 	*/
 	double calculate(double a, double b, string op){
 		if (op == "+") {
@@ -363,12 +363,12 @@ public:
 		}
 		return NAN;
 	}
-	
+
 	/**
-	* @brief Calcula el resultado de una operaciÛn unaria
-	* @param x Valor al cual se aplica la operaciÛn
+	* @brief Calcula el resultado de una operaci√≥n unaria
+	* @param x Valor al cual se aplica la operaci√≥n
     * @param op Operando
-	* @return Resultado de la operaciÛn, NAN si no es v·lida
+	* @return Resultado de la operaci√≥n, NAN si no es v√°lida
 	*/
 	double calculateUnary(double x, string op) {
 		if (op == "~") {
@@ -376,11 +376,11 @@ public:
 		}
 		return NAN;
 	}
-	
+
 	/**
 	* @brief Calcula la precedencia de un operador
 	* @param op Operador
-	* @return Precedencia (1 para suma y resta, 2 para producto y divisiÛn, 3 para potencia y negaciÛn
+	* @return Precedencia (1 para suma y resta, 2 para producto y divisi√≥n, 3 para potencia y negaci√≥n
 	*/
 	int precedence(string op){
 		if(op == "+"||op == "-") {
@@ -394,7 +394,7 @@ public:
 		}
 		return 0;
 	}
-	
+
 	/**
 	* @brief Determina si un nombre dado corresponde a una variable, obteniendo su valor
 	* @param name Nombre de la variable
@@ -417,12 +417,12 @@ public:
 		}
 		return false;
 	}
-	
+
 	/**
-	* @brief Verifica si un nombre dado corresponde a una funciÛn
+	* @brief Verifica si un nombre dado corresponde a una funci√≥n
 	* @param name Nombre a verificar
-	* @param func Referencia a la funciÛn obtenida, si existe
-	* @return Verdadero si la funciÛn est· definida, falso en caso contrario
+	* @param func Referencia a la funci√≥n obtenida, si existe
+	* @return Verdadero si la funci√≥n est√≥ definida, falso en caso contrario
 	*/
 	bool isFunction(string name, function<double(double)> & func) {
 		for (auto & f : functions) {
@@ -431,36 +431,36 @@ public:
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
-	* @brief Separa los elementos de la expresiÛn
+	* @brief Separa los elementos de la expresi√≥n
 	* @return Vector de cadenas con los elementos separados
 	*/
 	vector<string> getTokens() {
-		
+
 		vector<string> tokens;
 
 		string token;
 		string opchar;
-		
+
 		size_t pos = 0;
 		size_t nextPos;
-		
-		
+
+
 		// Verificar parentesis
 		if (!checkParenthesis()) {
 			return tokens;
 		}
-		
+
 		nextPos = string::npos;
-		
+
 		while ((nextPos = text.find_first_of("()+-*/^~", pos)) != string::npos) {
 			if (nextPos != string::npos) {
 				opchar =  std::string(1, text[nextPos]);
-				
+
 				token = text.substr(pos, nextPos - pos);
 				if (token.length() > 0) {
 					tokens.push_back(token);
@@ -481,11 +481,11 @@ public:
 		}
 		return tokens;
 	}
-	
+
 	/**
-	* @brief Obtiene la representaciÛn RPN de la expresiÛn original
+	* @brief Obtiene la representaci√≥n RPN de la expresi√≥n original
 	* @param tokens Vector de elementos separados
-	* @return Vector de elementos de la expresiÛn en NotaciÛn Reversa Polaca (RPN)
+	* @return Vector de elementos de la expresi√≥n en Notaci√≥n Reversa Polaca (RPN)
 	*/
 	vector<string> getRPN(vector<string> tokens) {
 
@@ -495,14 +495,14 @@ public:
 		double val;
 		function<double(double)> func;
 		string op;
-		
+
 		string token;
-		
+
 		size_t i;
 		//Shunting Yard Algorithm
-		
+
 		//while there are tokens to be read:
-		
+
 		for (i = 0; i < input.size(); i++)  {
 			//Read a token
 			token = input[i];
@@ -520,16 +520,16 @@ public:
 			//an operator o1:
 			else if (isOperator(token)) {
 				//while (
-				//there is an operator o2 at the top of the operator stack which is not a left parenthesis, 
+				//there is an operator o2 at the top of the operator stack which is not a left parenthesis,
 				//and (o2 has greater precedence than o1 or (o1 and o2 have the same precedence and o1 is left-associative))
 				//)
 				while (!operators.empty() && operators.top() != "("
-					   && (precedence(operators.top()) > precedence(token) || 
+					   && (precedence(operators.top()) > precedence(token) ||
 						   (precedence(operators.top()) == precedence(token) && isLeftAssociative(token)))) {
 					//pop o2 from the operator stack into the output queue
 					op = operators.top();
 					operators.pop();
-					
+
 					rpn.push_back(op);
 				}
 				//push o1 onto the operators stack
@@ -544,8 +544,8 @@ public:
 			else if (token == ")") {
 				//while the operator at the top of the operator stack is not a left parenthesis:
 				//{assert the operator stack is not empty}
-				//// If the stack runs out without finding a left parenthesis, then there are mismatched parenthesis. 
-				
+				//// If the stack runs out without finding a left parenthesis, then there are mismatched parenthesis.
+
 				while (!operators.empty() && operators.top() != "(") {
 					//pop the operator from the operator stack into the output queue
 					op = operators.top();
@@ -554,11 +554,11 @@ public:
 				}
 				//{assert there is a left parenthesis at the top of the operator stack}
 				//pop the left parenthesis from the operator stack and discard it
-				
+
 				if (!operators.empty() && operators.top() == "(") {
 					operators.pop();
 				}
-				
+
 				//if there is a function token at the top of the operator stack, then:
 				//pop the function from the operator stack into the output queue
 				if (!operators.empty() && isFunction(operators.top(), func)) {
@@ -573,13 +573,13 @@ public:
 				rpn.push_back(token);
 			}
 		}
-		
-		/* 
-		After the while loop, pop the remaining items from the operator stack into the output queue. 
+
+		/*
+		After the while loop, pop the remaining items from the operator stack into the output queue.
 		while there are tokens on the operator stack:
 		*/
 		while (!operators.empty()) {
-			// If the operator token on the top of the stack is a parenthesis, then there are mismatched parenthesis. 
+			// If the operator token on the top of the stack is a parenthesis, then there are mismatched parenthesis.
 			// Ya se ha verificado el balance de parentesis
 			//{assert the operator on top of the stack is not a (left) parenthesis}
 			//pop the operator from the operator stack onto the output queue
@@ -589,96 +589,96 @@ public:
 				rpn.push_back(op);
 			}
 		}
-		
-		// rpn almacena la representaciÛn RPN de la expresiÛn
+
+		// rpn almacena la representaci√≥n RPN de la expresi√≥n
 		return rpn;
 	}
-	
+
 	/**
 	* @brief Sobrecarga del operador ()
-	* @return Resultado de evaluar la expresiÛn
+	* @return Resultado de evaluar la expresi√≥n
 	*/
 	double operator()() {
 		return eval();
 	}
-	
+
 	/**
 	* @brief Sobrecarga del operador () sobre x
-	* @param val Valor de la variable x de la expresiÛn
-	* @return Resultado de evaluar la expresiÛn
+	* @param val Valor de la variable x de la expresi√≥n
+	* @return Resultado de evaluar la expresi√≥n
 	*/
 	double operator()(double val) {
 		return eval(val);
 	}
-	
+
 	/**
 	* @brief Sobrecarga del operador () sobre variables
 	* @param vars Arreglo de variables a reemplazar
-	* @return Resultado de evaluar la expresiÛn
+	* @return Resultado de evaluar la expresi√≥n
 	*/
 	double operator()(vector<Variable> vars) {
 		return eval(vars);
 	}
-	
+
 	/**
-	* @brief Eval˙a la expresiÛn usando las variables por defecto
-	* @return Resultado de evaluar la expresiÛn
+	* @brief Eval√≥a la expresi√≥n usando las variables por defecto
+	* @return Resultado de evaluar la expresi√≥n
 	*/
 	double eval() {
 		vector<Variable> vars = defaultVariables();
 		return eval(vars);
 	}
-	
+
 	/**
-	* @brief Eval˙a la expresiÛn para un valor de x
-	* @param val Valor para una ˙nica variable llamada x
-	* @return Resultado de la expresiÛn
+	* @brief Eval√≥a la expresi√≥n para un valor de x
+	* @param val Valor para una √∫nica variable llamada x
+	* @return Resultado de la expresi√≥n
 	*/
 	double eval(double val) {
-		
+
 		vector<Variable> vars = defaultVariables();
 		bool updated = false;
-		
+
 		for (auto & v: vars) {
 			if (v.name == "x") {
 				v.val = val;
 				updated = true;
 			}
 		}
-		
+
 		if (!updated) {
 			vars.push_back({"x", val});
 		}
-		
+
 		return eval(vars);
 	}
-	
+
 	/**
-	* @brief Eval˙a la expresiÛn para una un m·s variables
+	* @brief Eval√≥a la expresi√≥n para una un m√°s variables
 	* @param vars Vector de variables
-	* @return Resultado de la expresiÛn
+	* @return Resultado de la expresi√≥n
 	*/
 	double eval(vector<Variable> vars) {
 		return evalRPN(rpn, vars);
 	}
-	
+
 
 	/**
-	* @brief Eval˙a la expresiÛn para una un m·s variables y una o m·s funciones
-	* @param rpn ExpresiÛn (vector de cadenas) en RPN
+	* @brief Eval√≥a la expresi√≥n para una un m√°s variables y una o m√°s funciones
+	* @param rpn Expresi√≥n (vector de cadenas) en RPN
 	* @param vars Vector de variables
-	* @return Resultado de la expresiÛn
+	* @return Resultado de la expresi√≥n
 	*/
 	double evalRPN(vector<string> rpn, vector<Variable> vars) {
 		double result = NAN;
-		
+
 		stack<double> values;
-		
+
 		vector<string> items = rpn;
 		function<double(double)> func;
 		double val;
 
-		
+
 		for (auto & item: rpn) {
 			if (getNumber(item, val)) {
 				values.push(val);
@@ -722,17 +722,17 @@ public:
 			result = values.top();
 			values.pop();
 		}
-		
+
 		return result;
 	}
-	
+
 private:
-	string text; /*!< Texto original de la expresiÛn */
+	string text; /*!< Texto original de la expresi√≥n */
 	vector<CustomFunction> functions; /*!< Vector de funciones personalizadas */
-	vector<string> tokens; /*!< Elementos separados de la expresiÛn */
-	string tokensStr; /*!< Cadena de texto de la expresiÛn */
-	vector<string> rpn; /*!< Elementos separados de la expresiÛn en RPN */
-	string rpnStr; /*!< Cadena de texto de la expresiÛn  en RPN */
+	vector<string> tokens; /*!< Elementos separados de la expresi√≥n */
+	string tokensStr; /*!< Cadena de texto de la expresi√≥n */
+	vector<string> rpn; /*!< Elementos separados de la expresi√≥n en RPN */
+	string rpnStr; /*!< Cadena de texto de la expresi√≥n  en RPN */
 	bool balanced; /*!< Verdadero si los parentesis se encuentran balanceados */
 };
 
